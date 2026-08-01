@@ -164,7 +164,7 @@ Before finalising any candidate: can a writer produce this piece from real sourc
 
 ## Step 4c — DataforSEO keyword scoring (manual selection)
 
-Runs after direction is confirmed (Step 4) and writability is checked (Step 4b). Purpose: surface a ranked, intent-flagged list of qualifying keyword variants and let the user choose the Primary KW — rather than auto-selecting the highest-SV option. Output feeds directly into Step 5, but only after the user has made a choice and the verification check has completed.
+Runs after direction is confirmed (Step 4) and writability is checked (Step 4b). Purpose: surface the full ranked, intent-flagged list of keyword variants and let the user choose the Primary KW — rather than auto-selecting the highest-SV option or pre-cutting the list to a narrow difficulty band. Output feeds directly into Step 5, but only after the user has made a choice and the verification check has completed.
 
 **This step requires the DataforSEO script. If the call fails or times out, skip this step entirely, proceed to Step 5, generate candidates without SV/KD, and note "keyword data unavailable" in the output table. Never halt.**
 
@@ -185,41 +185,46 @@ The script runs two DataforSEO calls internally and returns a scored payload.
 
 Note: this variant does not use a `winner` field for auto-selection. `all_variants` is the primary payload.
 
-### Scoring rule (applied inside the script)
+### Filtering rule (SV is a floor; KD is not a gate)
 
-1. Variants with SV < 150 are excluded before scoring
-2. Variants with KD > 70 are dropped
-3. Up to 20 qualifying variants are returned, unranked by the script — ranking for presentation happens in this step (see below)
+1. Variants with SV < 150 are excluded (this is already applied inside the script — a floor, since near-zero volume isn't worth evaluating regardless of difficulty)
+2. Drop obviously malformed/junk variants (e.g. spaced-out letter strings, garbled duplicates) — this is a data-quality filter, not a difficulty judgment, and happens before presentation
+3. **Do not drop variants for KD > 70.** KD is a competitiveness signal, not a viability cutoff — a human may reasonably pick a KD 72 term the script would otherwise hide. Every remaining variant (up to 20) gets shown, banded by difficulty instead of gated by it (see below)
 
 ### Presenting the list for manual selection
 
-Group `all_variants` by intent alignment against the target funnel stage from Step 4:
+Group the remaining variants by intent alignment against the target funnel stage from Step 4:
 
 - `informational` → aligned with Top
 - `commercial` / `investigational` → aligned with Middle
 - `transactional` → aligned with Bottom
 
-Present two groups — **✓ Aligned with [target funnel stage]** and **✗ Other intent** — each sorted by SV descending within the group. Aligned rows are listed first.
+Within each intent group, band by KD instead of cutting:
+- **Easier** — KD ≤ 70
+- **Competitive** — KD 71–85
+- **Hard** — KD 85+
+
+Present two groups — **✓ Aligned with [target funnel stage]** and **✗ Other intent** — each sorted by SV descending within the group (band shown as a column, not used to exclude rows). Aligned rows are listed first.
 
 ```
 **Choose a Primary KW for this [target funnel stage] piece.**
 
 ✓ Aligned with [target funnel stage]:
 
-| Keyword | SV | KD | Intent |
-|---|---|---|---|
-| ... | ... | ... | ... |
+| Keyword | SV | KD | Band | Intent |
+|---|---|---|---|---|
+| ... | ... | ... | ... | ... |
 
 ✗ Other intent (shown for reference — may still be viable):
 
-| Keyword | SV | KD | Intent |
-|---|---|---|---|
-| ... | ... | ... | ... |
+| Keyword | SV | KD | Band | Intent |
+|---|---|---|---|---|
+| ... | ... | ... | ... | ... |
 ```
 
 Wait for the user to name their chosen keyword.
 
-**If the script returns zero qualifying variants:** state this plainly and ask the user to supply a Primary KW manually, or proceed without KW data per the fallback rule above.
+**If the script returns zero variants at all (nothing meets the SV ≥ 150 floor):** state this plainly and ask the user to supply a Primary KW manually, or proceed without KW data per the fallback rule above.
 
 ### 4c-ii — Verification (always fires, after the user's choice)
 
@@ -229,7 +234,7 @@ Once the user has named their chosen keyword, always run a second script call se
 ./scripts/sera_dataforseo.sh "[best SERP-pattern candidate from Step 2]"
 ```
 
-Apply the same scoring rule (SV ≥ 150, KD ≤ 70) to the response.
+Apply the same SV ≥ 150 floor and junk-filtering to the response (no KD cutoff).
 
 **This is a verification check only — it never overrides the user's choice and never re-prompts.**
 
@@ -426,7 +431,7 @@ After the brief feed block, add exactly this line:
 - Never suggest optimizing existing content — that belongs to Dexter
 - DataforSEO step (Step 4c) runs after direction is confirmed and writability is checked — never before Step 4
 - DataforSEO script: `./scripts/sera_dataforseo.sh "[Seed KW]"`
-- **DataforSEO scoring: SV ≥ 150, KD ≤ 70, up to 20 variants returned.** No auto-winner — the full qualifying list is presented to the user, grouped by intent alignment (✓/✗ against target funnel stage) and sorted by SV descending within each group.
+- **DataforSEO scoring: SV ≥ 150 is a hard floor; KD is not a cutoff.** Junk/malformed variants are dropped as a data-quality filter, not a difficulty judgment. Up to 20 variants returned. No auto-winner — the full list is presented to the user, grouped by intent alignment (✓/✗ against target funnel stage), banded by KD (Easier ≤70 / Competitive 71–85 / Hard 85+), and sorted by SV descending within each group. Nothing that clears the SV floor is hidden from the user before they choose.
 - The user selects the Primary KW manually from the presented list. Sera does not proceed to Step 5 until a choice is made.
 - 4c-ii (verification call, seeded with Step 2's best SERP-pattern candidate) always fires after the user's choice — never before, never as a second decision gate. It only ever adds a reference note to the Flag column; it never overrides the user's pick and never re-prompts.
 - SERP alignment from Step 2 is a tiebreaker note only — never overrides the user's chosen keyword
