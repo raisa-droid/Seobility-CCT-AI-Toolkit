@@ -162,7 +162,7 @@ If the user selects none, proceed without NIG additions.
 1. Run `brief_reddit_miner.sh` via bash with the H1 as the input: `./scripts/brief_reddit_miner.sh "[H1]"`
 2. The script returns a formatted block containing two sections: `Real scenarios & examples` and `Gaps worth addressing`
 3. Parse the output — split at section headers:
-   - Store `Real scenarios & examples` bullets silently — these will populate the Real-world context section in Step 3. Do not surface to the user.
+   - Store `Real scenarios & examples` bullets silently — these will populate the Real-world context section in Step 3. Do not surface to the user. Once the Structure section is built, tag each stored scenario with the H2 it's most relevant to (see Step 3 output format) — do not leave scenarios unattached to a section.
    - Extract `Gaps worth addressing` bullets and present to the user for selection. Format:
 
 ```
@@ -327,9 +327,13 @@ H2 — FAQs (Answer in 2–3 sentences. Write for AI extraction — clear, direc
 
 Populate with 3–5 questions sourced from the `questions` array returned by `brief_dataforseo_paa.sh`. Before populating, cross-check all candidate questions against H2/H3 headings already present in the Structure section — drop any question that duplicates an existing heading. List questions as H3s only — no per-question answer direction. The answer direction appears once on the H2 label and applies to all H3s beneath it.
 
-**Real-world context**
+**Real-world context from Reddit**
 
-[Only present if Step 1e Reddit miner returned scenarios. Populate with the `Real scenarios & examples` bullets from the miner output, surfaced as-is. No rewriting, no synthesis. If the miner returned no results or errored, omit this section entirely.]
+[Only present if Step 1e Reddit miner returned scenarios. Populate with the `Real scenarios & examples` bullets from the miner output, verbatim — no rewriting, no synthesis. Each bullet keeps its source URL and gets one added tag pointing to the H2 it's most relevant to, in this exact shape:
+
+- [scenario text, verbatim] → [source URL] *(recommend using in: [H2 title])*
+
+The tag is a placement suggestion for the writer, not a rewrite of the scenario — the underlying text and URL must stay exactly as the miner returned them. If no single H2 is a clean fit for a scenario, tag it against the closest one rather than dropping the tag. If the miner returned no results or errored, omit this section entirely.]
 
 **Flags & editorial notes**
 
@@ -393,7 +397,7 @@ Note: Must Avoid items are not listed here. They are applied silently during str
 - Search intent + dominant SERP format is skill-generated from Step 1a. It sits on the same line as Funnel in the brief header.
 - E-E-A-T italic note appears in the Structure section only when the dominant SERP format is a listicle. It appears once, under the listicle H2, before the first H3. It does not repeat per H3 entry.
 - FAQs H2 appears in the Structure section only when Step 1a PAA fetch returns `paa_present: true`. Label it: `FAQs (Answer in 2–3 sentences. Write for AI extraction — clear, direct, no preamble.)` — not "Frequently asked questions". FAQs H2 is always the final H2 in the Structure section, placed immediately before the closing/CTA section. Cross-check all candidate questions against existing H2/H3 headings — drop duplicates. List questions as H3s only — no per-question answer direction. Answer direction appears once on the H2 label and applies to all H3s beneath it.
-- Real-world context section appears only when Step 1e Reddit miner returned scenarios. Scenarios are surfaced as-is — no rewriting or synthesis. If the miner errored or returned no results, omit the section entirely.
+- Real-world context section is labeled "Real-world context from Reddit" and appears only when Step 1e Reddit miner returned scenarios. Scenarios are surfaced verbatim with their source URL — no rewriting or synthesis — and each one gets a "(recommend using in: [H2 title])" tag pointing to its most relevant Structure section. The tag is additive; it never replaces or shortens the original scenario text or drops the source URL. If the miner errored or returned no results, omit the section entirely.
 - Do not generate proof points or external references from SERP research. Proof points and external references are supplied by the user only — if not supplied, omit.
 - Cannibalization risks in Flags & editorial notes must be labeled **Cannibalization risk**, include the conflicting URL, and include scoping guidance for the writer. Do not label use case page overlaps as cannibalization risks — these are link opportunities, handled in the Structure section.
 - Flags & editorial notes always uses bullet points.
