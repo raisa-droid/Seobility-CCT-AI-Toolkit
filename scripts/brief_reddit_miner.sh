@@ -8,8 +8,8 @@
 set -euo pipefail
 
 # ── Credentials ────────────────────────────────────────────────────────────────
-if [ -f "$(dirname "$0")/../../.env" ]; then
-  source "$(dirname "$0")/../../.env"
+if [ -f "$(dirname "$0")/../.env" ]; then
+  source "$(dirname "$0")/../.env"
 fi
 
 : "${DATAFORSEO_LOGIN:?DATAFORSEO_LOGIN not set}"

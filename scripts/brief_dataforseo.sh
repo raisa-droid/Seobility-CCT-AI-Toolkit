@@ -53,13 +53,13 @@ echo "$RESPONSE" | jq \
   if (. == null or length == 0) then error("Keyword Overview returned no items") else . end |
 
   # Build result map (lowercase for case-insensitive match)
-  reduce .[] as $item (
+  (reduce .[] as $item (
     {};
     (.[$item.keyword | ascii_downcase]) = {
       sv: ($item.keyword_info.search_volume // null),
       intent: ($item.search_intent_info.main_intent // null)
     }
-  ) as $result_map |
+  )) as $result_map |
 
   {
     data_available: true,
