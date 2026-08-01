@@ -85,13 +85,13 @@ echo "$CALL2_RESPONSE" | jq \
   if (. == null or length == 0) then error("Call 2 returned no items") else . end |
 
   # Build KD + intent map
-  reduce .[] as $item (
+  (reduce .[] as $item (
     {};
     .[$item.keyword] = {
       kd: ($item.keyword_properties.keyword_difficulty // null),
       intent: ($item.search_intent_info.main_intent // null)
     }
-  ) as $kd_map |
+  )) as $kd_map |
 
   # Merge SV (Call 1) + KD/intent (Call 2)
   ($variants | map({
