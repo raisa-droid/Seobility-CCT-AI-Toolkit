@@ -2,8 +2,13 @@
 # brief_dataforseo_paa.sh
 # Fetches People Also Ask questions for a given query via DataforSEO SERP endpoint.
 # Usage: ./brief_dataforseo_paa.sh "How to Do an SEO Audit"
-# Returns JSON: { data_available, query, paa_present, questions: ["...", "..."] }
+# Returns JSON: { data_available, query, paa_present, questions: ["...", "..."], related_searches: ["...", "..."] }
 # depth: 20 — covers PAA appearing at any rank_absolute position up to 20.
+# related_searches is only populated when paa_present is false — it's a fallback
+# source for FAQ generation, deduped and stripped of query-echo artifacts (items
+# that are just the literal query plus a bolt-on word, e.g. "...checklist free").
+# Filtering for topical/format/funnel fit and rephrasing into questions is a
+# judgment call left to the brief skill, not done here.
 
 set -euo pipefail
 
@@ -51,19 +56,34 @@ echo "$RESPONSE" | jq \
   # Find the people_also_ask block
   ($items | map(select(.type == "people_also_ask")) | first) as $paa_block |
 
+  # Gather related_searches items (may appear in multiple blocks), dedupe
+  # case-insensitively (first occurrence wins), and strip query-echo artifacts
+  # (items that are just the literal query plus a bolt-on word).
+  ($items | map(select(.type == "related_searches")) | map(.items[])) as $rs_all |
+  ($rs_all | reduce .[] as $item ([];
+    if any(.[]; ascii_downcase == ($item | ascii_downcase)) then .
+    else . + [$item] end
+  )) as $rs_deduped |
+  (def norm: ascii_downcase | gsub("[^a-z0-9 ]"; " ") | gsub(" +"; " ") | ltrimstr(" ") | rtrimstr(" ");
+   ($query | norm) as $qnorm |
+   $rs_deduped | map(select((. | norm | startswith($qnorm)) | not))
+  ) as $rs_filtered |
+
   if $paa_block == null then
     {
       data_available: true,
       query: $query,
       paa_present: false,
-      questions: []
+      questions: [],
+      related_searches: $rs_filtered
     }
   else
     {
       data_available: true,
       query: $query,
       paa_present: true,
-      questions: [$paa_block.items[].title]
+      questions: [$paa_block.items[].title],
+      related_searches: []
     }
   end
 '

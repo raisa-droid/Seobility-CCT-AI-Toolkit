@@ -91,11 +91,17 @@ Run both of the following in parallel:
    - **Search intent** — the dominant intent type (Informational, Commercial, Navigational, Transactional)
    - **Average word count** — approximate content length of the top 3 results, used to generate a word count benchmark
 
-**PAA fetch (DataforSEO):**
+**PAA fetch (DataforSEO), with related_searches fallback:**
 1. Run `brief_dataforseo_paa.sh` via bash with the H1 as the input: `./scripts/brief_dataforseo_paa.sh "[H1]"`
-2. Read `paa_present` and `questions` from the JSON response
-3. If `paa_present: true` — store the questions list for use in Step 3 (FAQs H2)
-4. If `paa_present: false` — no FAQs H2 in the brief. This is a valid result, not an error.
+2. Read `paa_present`, `questions`, and `related_searches` from the JSON response
+3. If `paa_present: true` — store the questions list for use in Step 3 (FAQs H2). Ignore `related_searches` (it will be empty in this case).
+4. If `paa_present: false` — fall back to `related_searches` (already deduped and stripped of query-echo artifacts by the script):
+   - **Filter for fit** — drop any item that: duplicates territory already owned by a different-funnel companion piece in the same seed KW cluster (e.g. a "what is X" phrase when this H1 isn't the Top piece); belongs to a different seed KW cluster entirely (e.g. a "local" variant when this H1's cluster isn't local); or points to a different content format than this H1 (a template, download, or tool-homepage query rather than something answerable in 2–3 sentences).
+   - **Cross-check survivors against existing H2/H3 headings** already drafted in the Structure section — drop anything that just restates a step or section (same duplicate check applied to PAA-sourced questions).
+   - **Merge near-duplicates** — collapse variants of the same underlying question into one representative version rather than listing each phrasing separately.
+   - **Rephrase into questions** — `related_searches` arrives as bare keyword phrases, not questions. Convert each survivor into a natural question a reader would actually ask.
+   - **Cap at 3–5** per the standard FAQ count — but only as a final trim; filtering for fit should usually do most of the narrowing on its own. If filtering leaves fewer than 3, use what survives rather than forcing the count.
+   - If zero items survive filtering, no FAQs H2 in the brief — same as a native `paa_present: false` with no fallback data. This is a valid result, not an error.
 5. If `data_available: false` — log the error, proceed with no FAQs section.
 
 ### 1b — Gemini research (bash)
@@ -321,11 +327,15 @@ Note in direction: "AEO asset — structure for featured snippet and AI-generate
 
 Do not repeat this note per H3 entry.
 
-**FAQs:** When Step 1a PAA fetch returns `paa_present: true`, include a FAQs H2 as a standard structural element. It is always the final H2 in the Structure section, placed immediately before the closing/CTA section. Label it:
+**FAQs:** Include a FAQs H2 as a standard structural element when either source below yields at least one usable question. It is always the final H2 in the Structure section, placed immediately before the closing/CTA section. Label it:
 
 H2 — FAQs (Answer in 2–3 sentences. Write for AI extraction — clear, direct, no preamble.)
 
-Populate with 3–5 questions sourced from the `questions` array returned by `brief_dataforseo_paa.sh`. Before populating, cross-check all candidate questions against H2/H3 headings already present in the Structure section — drop any question that duplicates an existing heading. List questions as H3s only — no per-question answer direction. The answer direction appears once on the H2 label and applies to all H3s beneath it.
+**Source priority:**
+- If Step 1a PAA fetch returns `paa_present: true`: populate with 3–5 questions sourced directly from the `questions` array. These arrive already question-shaped — no rephrasing needed.
+- If `paa_present: false`: populate with the filtered, rephrased, deduped questions carried over from the `related_searches` fallback (Step 1a, item 4). If that fallback yielded zero usable items, omit the FAQs H2 entirely.
+
+Before populating from either source, cross-check all candidate questions against H2/H3 headings already present in the Structure section — drop any question that duplicates an existing heading. List questions as H3s only — no per-question answer direction. The answer direction appears once on the H2 label and applies to all H3s beneath it.
 
 **Real-world context from Reddit**
 
@@ -372,7 +382,7 @@ Note: Must Avoid items are not listed here. They are applied silently during str
 - At Step 1d, present only the Novel Information Gain table. Do not surface the Must Include or Must Avoid tables.
 - At Step 1e, present only the gaps to the user. Do not surface the scenarios — hold them silently for the Real-world context section in Step 3.
 - Step 1a must always identify and record: dominant SERP format, search intent, PAA data from DataforSEO, and average word count from top 3 results. These are required inputs for Step 1c and the brief output.
-- PAA data comes exclusively from `brief_dataforseo_paa.sh` — never infer PAA questions from web_search results or fetched page content.
+- PAA data comes exclusively from `brief_dataforseo_paa.sh` — never infer PAA questions from web_search results or fetched page content. When PAA is absent, the `related_searches` fallback also comes exclusively from that script's response — never infer related searches from web_search or fetched page content either.
 - Before filtering entities in Step 1c: confirm dominant SERP format from Step 1a. If format is listicle or comparison, the third-party tool/brand exclusion rule does not apply — retain named tools and platforms as valid entities.
 - Step 1b Gemini script is active. Skip web_fetch on Gemini sources if no specific article URLs are present in `sources_raw` after filtering — proceed with synthesis text only.
 - SV soft filter in Step 1f: a term below SV 500 is retained if (a) it appears in 2+ sources from Steps 1a/1b, (b) it directly names an audit component, product feature, or reader task central to the H1, or (c) it has no high-SV synonym already covering it in the candidate pool. Never hard-drop a below-threshold term without checking these criteria first. If SV is null (script returned no data for the term), retain it with a flag: "SV unknown — verify manually."
@@ -396,7 +406,8 @@ Note: Must Avoid items are not listed here. They are applied silently during str
 - Word count is a SERP benchmark derived from the average length of the top 3 results in Step 1a. Present as a range. Label in italic as a guide, not a hard target.
 - Search intent + dominant SERP format is skill-generated from Step 1a. It sits on the same line as Funnel in the brief header.
 - E-E-A-T italic note appears in the Structure section only when the dominant SERP format is a listicle. It appears once, under the listicle H2, before the first H3. It does not repeat per H3 entry.
-- FAQs H2 appears in the Structure section only when Step 1a PAA fetch returns `paa_present: true`. Label it: `FAQs (Answer in 2–3 sentences. Write for AI extraction — clear, direct, no preamble.)` — not "Frequently asked questions". FAQs H2 is always the final H2 in the Structure section, placed immediately before the closing/CTA section. Cross-check all candidate questions against existing H2/H3 headings — drop duplicates. List questions as H3s only — no per-question answer direction. Answer direction appears once on the H2 label and applies to all H3s beneath it.
+- FAQs H2 appears in the Structure section when Step 1a PAA fetch returns `paa_present: true`, OR when `paa_present: false` and the `related_searches` fallback yields at least one usable question after filtering, cross-checking, and rephrasing. Label it: `FAQs (Answer in 2–3 sentences. Write for AI extraction — clear, direct, no preamble.)` — not "Frequently asked questions". FAQs H2 is always the final H2 in the Structure section, placed immediately before the closing/CTA section. Cross-check all candidate questions against existing H2/H3 headings — drop duplicates. List questions as H3s only — no per-question answer direction. Answer direction appears once on the H2 label and applies to all H3s beneath it.
+- `related_searches` fallback filtering (only runs when `paa_present: false`): drop items duplicating a different-funnel companion piece's territory, items from a different seed KW cluster, and items pointing to a non-Q&A content format (template, download, tool-homepage query). Merge near-duplicate phrasings into one representative question. Rephrase surviving bare keyword phrases into natural questions — `related_searches` does not arrive question-shaped like PAA does. Cap at 3–5, but treat the cap as a last-resort trim, not the primary filter — fit-filtering should do most of the narrowing. Zero survivors is a valid result: omit the FAQs H2, not an error.
 - Real-world context section is labeled "Real-world context from Reddit" and appears only when Step 1e Reddit miner returned scenarios. Scenarios are surfaced verbatim with their source URL — no rewriting or synthesis — and each one gets a "(recommend using in: [H2 title])" tag pointing to its most relevant Structure section. The tag is additive; it never replaces or shortens the original scenario text or drops the source URL. If the miner errored or returned no results, omit the section entirely.
 - Do not generate proof points or external references from SERP research. Proof points and external references are supplied by the user only — if not supplied, omit.
 - Cannibalization risks in Flags & editorial notes must be labeled **Cannibalization risk**, include the conflicting URL, and include scoping guidance for the writer. Do not label use case page overlaps as cannibalization risks — these are link opportunities, handled in the Structure section.
