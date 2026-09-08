@@ -14,7 +14,7 @@ fi
 
 : "${DATAFORSEO_LOGIN:?DATAFORSEO_LOGIN not set}"
 : "${DATAFORSEO_PASSWORD:?DATAFORSEO_PASSWORD not set}"
-: "${GEMINI_API_KEY:?GEMINI_API_KEY not set}"
+: "${GEMINI_WEBHOOK_URL:?GEMINI_WEBHOOK_URL not set}"
 
 AUTH=$(echo -n "$DATAFORSEO_LOGIN:$DATAFORSEO_PASSWORD" | base64)
 
@@ -85,7 +85,7 @@ Up to 3 bullet points. Each bullet is a place where commenters reached for a cle
 No usernames. No preamble. No commentary outside these two sections."
 
   RESPONSE=$(curl -s -X POST \
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$GEMINI_API_KEY" \
+    "${GEMINI_WEBHOOK_URL}" \
     -H "Content-Type: application/json" \
     -d "{\"contents\": [{\"parts\": [{\"text\": \"$PROMPT\"}]}]}" \
     | python3 -c "
@@ -151,7 +151,7 @@ Rules:
 FORMAT_PROMPT_ESCAPED=$(echo "$FORMAT_PROMPT" | python3 -c "import sys, json; print(json.dumps(sys.stdin.read()))")
 
 curl -s -X POST \
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$GEMINI_API_KEY" \
+  "${GEMINI_WEBHOOK_URL}" \
   -H "Content-Type: application/json" \
   -d "{\"contents\": [{\"parts\": [{\"text\": $FORMAT_PROMPT_ESCAPED}]}]}" \
   | python3 -c "
