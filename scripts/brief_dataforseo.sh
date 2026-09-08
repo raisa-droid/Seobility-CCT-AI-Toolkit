@@ -12,10 +12,7 @@ if [ -f "$(dirname "$0")/../.env" ]; then
   source "$(dirname "$0")/../.env"
 fi
 
-: "${DATAFORSEO_LOGIN:?DATAFORSEO_LOGIN not set}"
-: "${DATAFORSEO_PASSWORD:?DATAFORSEO_PASSWORD not set}"
-
-AUTH=$(echo -n "$DATAFORSEO_LOGIN:$DATAFORSEO_PASSWORD" | base64)
+: "${DATAFORSEO_WEBHOOK_URL:?DATAFORSEO_WEBHOOK_URL not set}"
 
 # ── Input ──────────────────────────────────────────────────────────────────────
 if [ $# -eq 0 ]; then
@@ -37,10 +34,9 @@ BODY=$(jq -n \
   '[{"keywords": $kws, "location_code": 2840, "language_code": "en"}]')
 
 RESPONSE=$(curl -s -X POST \
-  "https://api.dataforseo.com/v3/dataforseo_labs/google/keyword_overview/live" \
-  -H "Authorization: Basic $AUTH" \
+  "${DATAFORSEO_WEBHOOK_URL}" \
   -H "Content-Type: application/json" \
-  -d "$BODY")
+  -d "$(jq -n --arg endpoint 'https://api.dataforseo.com/v3/dataforseo_labs/google/keyword_overview/live' --argjson body "$BODY" '{endpoint: $endpoint, body: $body}')")
 
 # ── Parse ──────────────────────────────────────────────────────────────────────
 echo "$RESPONSE" | jq \
