@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
-# sera_dataforseo.sh
-# Replicates: ACTIVE_Sera DataforSEO Webhook_SV 150
-# Usage: ./sera_dataforseo.sh "technical seo"
-# Returns JSON: { data_available, seed_kw, winner, all_variants, fallback_applied }
+# brief_dataforseo_paa.sh
+# Fetches People Also Ask questions for a given query via DataforSEO SERP endpoint.
+# Usage: ./brief_dataforseo_paa.sh "How to Do an SEO Audit"
+# Returns JSON: { data_available, query, paa_present, questions: ["...", "..."], related_searches: ["...", "..."] }
+# depth: 20 — covers PAA appearing at any rank_absolute position up to 20.
+# related_searches is only populated when paa_present is false — it's a fallback
+# source for FAQ generation, deduped and stripped of query-echo artifacts (items
+# that are just the literal query plus a bolt-on word, e.g. "...checklist free").
+# Filtering for topical/format/funnel fit and rephrasing into questions is a
+# judgment call left to the brief skill, not done here.
 
 set -euo pipefail
 
@@ -11,114 +17,69 @@ if [ -f "$(dirname "$0")/../.env" ]; then
   source "$(dirname "$0")/../.env"
 fi
 
-: "${DATAFORSEO_LOGIN:?DATAFORSEO_LOGIN not set}"
-: "${DATAFORSEO_PASSWORD:?DATAFORSEO_PASSWORD not set}"
-
-AUTH=$(echo -n "$DATAFORSEO_LOGIN:$DATAFORSEO_PASSWORD" | base64)
+: "${DATAFORSEO_WEBHOOK_URL:?DATAFORSEO_WEBHOOK_URL not set}"
 
 # ── Input ──────────────────────────────────────────────────────────────────────
-SEED_KW="${1:-}"
-if [ -z "$SEED_KW" ]; then
-  echo '{"data_available": false, "error": "Missing seed_kw argument"}' >&2
+if [ $# -eq 0 ]; then
+  echo '{"data_available": false, "error": "No query provided"}' >&2
   exit 1
 fi
 
-# ── Call 1: keyword_suggestions ───────────────────────────────────────────────
-CALL1_BODY=$(jq -n \
-  --arg kw "$SEED_KW" \
-  '[{"keyword": $kw, "location_code": 2840, "language_code": "en", "limit": 20}]')
+QUERY="$1"
 
-CALL1_RESPONSE=$(curl -s -X POST \
-  "https://api.dataforseo.com/v3/dataforseo_labs/google/keyword_suggestions/live" \
-  -H "Authorization: Basic $AUTH" \
+# ── Call: SERP organic live advanced ──────────────────────────────────────────
+BODY=$(jq -n \
+  --arg query "$QUERY" \
+  '[{"keyword": $query, "location_code": 2840, "language_code": "en", "depth": 20}]')
+
+RESPONSE=$(curl -s -X POST \
+  "${DATAFORSEO_WEBHOOK_URL}" \
   -H "Content-Type: application/json" \
-  -d "$CALL1_BODY")
+  -d "$(jq -n --arg endpoint 'https://api.dataforseo.com/v3/serp/google/organic/live/advanced' --argjson body "$BODY" '{endpoint: $endpoint, body: $body}')")
 
-# Parse Call 1: filter SV >= 150, min 3 words, sort desc, top 20
-VARIANTS=$(echo "$CALL1_RESPONSE" | jq --arg seed "$SEED_KW" '
+# ── Parse ──────────────────────────────────────────────────────────────────────
+echo "$RESPONSE" | jq \
+  --arg query "$QUERY" '
   .tasks[0] |
   if .status_code != 20000 then
-    error("Call 1 failed: \(.status_message)")
+    error("SERP request failed: \(.status_message)")
   else . end |
-  .result[0].items |
-  if (. == null or length == 0) then error("Call 1 returned no items") else . end |
-  map({
-    keyword: .keyword,
-    sv: (.keyword_info.search_volume // 0)
-  }) |
-  map(select(
-    .sv >= 150 and
-    (.keyword | split(" ") | length) >= 3
-  )) |
-  sort_by(-.sv) |
-  .[0:20]
-')
-
-VARIANT_COUNT=$(echo "$VARIANTS" | jq 'length')
-if [ "$VARIANT_COUNT" -eq 0 ]; then
-  echo '{"data_available": false, "error": "No variants met SV >= 150 threshold"}'
-  exit 0
-fi
-
-# ── Call 2: keyword_overview ──────────────────────────────────────────────────
-KEYWORDS_ARRAY=$(echo "$VARIANTS" | jq '[.[].keyword]')
-
-CALL2_BODY=$(jq -n \
-  --argjson kws "$KEYWORDS_ARRAY" \
-  '[{"keywords": $kws, "location_code": 2840, "language_code": "en"}]')
-
-CALL2_RESPONSE=$(curl -s -X POST \
-  "https://api.dataforseo.com/v3/dataforseo_labs/google/keyword_overview/live" \
-  -H "Authorization: Basic $AUTH" \
-  -H "Content-Type: application/json" \
-  -d "$CALL2_BODY")
-
-# ── Merge + Score ─────────────────────────────────────────────────────────────
-echo "$CALL2_RESPONSE" | jq \
-  --arg seed "$SEED_KW" \
-  --argjson variants "$VARIANTS" '
-  .tasks[0] |
-  if .status_code != 20000 then
-    error("Call 2 failed: \(.status_message)")
+  .result[0].items as $items |
+  if ($items == null or ($items | length) == 0) then
+    error("SERP returned no items")
   else . end |
-  .result[0].items |
-  if (. == null or length == 0) then error("Call 2 returned no items") else . end |
 
-  # Build KD + intent map
-  (reduce .[] as $item (
-    {};
-    .[$item.keyword] = {
-      kd: ($item.keyword_properties.keyword_difficulty // null),
-      intent: ($item.search_intent_info.main_intent // null)
+  # Find the people_also_ask block
+  ($items | map(select(.type == "people_also_ask")) | first) as $paa_block |
+
+  # Gather related_searches items (may appear in multiple blocks), dedupe
+  # case-insensitively (first occurrence wins), and strip query-echo artifacts
+  # (items that are just the literal query plus a bolt-on word).
+  ($items | map(select(.type == "related_searches")) | map(.items[])) as $rs_all |
+  ($rs_all | reduce .[] as $item ([];
+    if any(.[]; ascii_downcase == ($item | ascii_downcase)) then .
+    else . + [$item] end
+  )) as $rs_deduped |
+  (def norm: ascii_downcase | gsub("[^a-z0-9 ]"; " ") | gsub(" +"; " ") | ltrimstr(" ") | rtrimstr(" ");
+   ($query | norm) as $qnorm |
+   $rs_deduped | map(select((. | norm | startswith($qnorm)) | not))
+  ) as $rs_filtered |
+
+  if $paa_block == null then
+    {
+      data_available: true,
+      query: $query,
+      paa_present: false,
+      questions: [],
+      related_searches: $rs_filtered
     }
-  )) as $kd_map |
-
-  # Merge SV (Call 1) + KD/intent (Call 2)
-  ($variants | map({
-    keyword: .keyword,
-    sv: .sv,
-    kd: ($kd_map[.keyword].kd // null),
-    intent: ($kd_map[.keyword].intent // null)
-  })) as $merged |
-
-  # Score: KD <= 70 wins; fallback to lowest KD if none qualify
-  ($merged | map(select(.kd != null and .kd <= 70))) as $qualified |
-  (if ($qualified | length) > 0
-    then {
-      winner: ($qualified | max_by(.sv)),
-      fallback_applied: false
+  else
+    {
+      data_available: true,
+      query: $query,
+      paa_present: true,
+      questions: [$paa_block.items[].title],
+      related_searches: []
     }
-    else {
-      winner: ($merged | map(select(.kd != null)) | min_by(.kd) // null),
-      fallback_applied: true
-    }
-  end) as $scored |
-
-  {
-    data_available: true,
-    seed_kw: $seed,
-    winner: $scored.winner,
-    all_variants: $merged,
-    fallback_applied: $scored.fallback_applied
-  }
+  end
 '
