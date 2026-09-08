@@ -11,7 +11,7 @@ if [ -f "$(dirname "$0")/../.env" ]; then
   source "$(dirname "$0")/../.env"
 fi
 
-: "${GEMINI_API_KEY:?GEMINI_API_KEY not set}"
+: "${GEMINI_WEBHOOK_URL:?GEMINI_WEBHOOK_URL not set}"
 
 # ── Input ──────────────────────────────────────────────────────────────────────
 H1="${1:-}"
@@ -20,14 +20,14 @@ if [ -z "$H1" ]; then
   exit 1
 fi
 
-# ── Call: Gemini 2.5 Flash ─────────────────────────────────────────────────────
+# ── Call: Gemini 2.5 Flash via n8n webhook ─────────────────────────────────────
 PROMPT="${H1}. include your source list with specific article URLs, not homepages or domain names only."
 
 BODY=$(jq -n --arg prompt "$PROMPT" \
   '{"contents": [{"parts": [{"text": $prompt}]}]}')
 
 RESPONSE=$(curl -s -X POST \
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}" \
+  "${GEMINI_WEBHOOK_URL}" \
   -H "Content-Type: application/json" \
   -d "$BODY")
 
