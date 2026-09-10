@@ -31,7 +31,7 @@ REDDIT_URLS=$(curl -s -X POST \
   -H "Content-Type: application/json" \
   -d "$(jq -n \
     --arg endpoint 'https://api.dataforseo.com/v3/serp/google/organic/live/advanced' \
-    --arg kw "site:reddit.com $H1" \
+    --arg kw "$H1 reddit" \
     '{endpoint: $endpoint, body: [{"keyword": $kw, "location_code": 2840, "language_code": "en", "depth": 10}]}')" \
   | python3 -c "
 import sys, json
@@ -41,9 +41,9 @@ try:
     result = task.get('result') or []
     items = (result[0] or {}).get('items') if result and result[0] else []
     organic = [i for i in (items or []) if i.get('type') == 'organic']
-    # The site:reddit.com operator isn't always honored by the SERP — filter
-    # to actual Reddit thread URLs (not other domains, and not subreddit
-    # indexes, settings pages, or other non-thread reddit.com URLs).
+    # Even with the site: operator dropped, the SERP can still return non-Reddit
+    # domains and non-thread Reddit pages (settings, subreddit indexes, wikis) —
+    # filter down to actual Reddit thread URLs.
     reddit_threads = [
         i['url'] for i in organic
         if 'reddit.com' in i.get('url', '') and '/comments/' in i.get('url', '')
@@ -95,10 +95,12 @@ Up to 3 bullet points. Each bullet is a place where commenters reached for a cle
 
 No usernames. No preamble. No commentary outside these two sections."
 
+  PROMPT_ESCAPED=$(echo "$PROMPT" | python3 -c "import sys, json; print(json.dumps(sys.stdin.read()))")
+
   RESPONSE=$(curl -s -X POST \
     "${GEMINI_WEBHOOK_URL}" \
     -H "Content-Type: application/json" \
-    -d "{\"contents\": [{\"parts\": [{\"text\": \"$PROMPT\"}]}]}" \
+    -d "{\"contents\": [{\"parts\": [{\"text\": $PROMPT_ESCAPED}]}]}" \
     | python3 -c "
 import sys, json
 data = json.load(sys.stdin)
