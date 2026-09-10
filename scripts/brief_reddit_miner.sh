@@ -35,11 +35,23 @@ REDDIT_URLS=$(curl -s -X POST \
     '{endpoint: $endpoint, body: [{"keyword": $kw, "location_code": 2840, "language_code": "en", "depth": 10}]}')" \
   | python3 -c "
 import sys, json
-data = json.load(sys.stdin)
-items = data['tasks'][0]['result'][0]['items']
-organic = [i for i in items if i['type'] == 'organic']
-urls = [i['url'] for i in organic[:3]]
-print('\n'.join(urls))
+try:
+    data = json.load(sys.stdin)
+    task = (data.get('tasks') or [{}])[0]
+    result = task.get('result') or []
+    items = (result[0] or {}).get('items') if result and result[0] else []
+    organic = [i for i in (items or []) if i.get('type') == 'organic']
+    # The site:reddit.com operator isn't always honored by the SERP — filter
+    # to actual Reddit thread URLs (not other domains, and not subreddit
+    # indexes, settings pages, or other non-thread reddit.com URLs).
+    reddit_threads = [
+        i['url'] for i in organic
+        if 'reddit.com' in i.get('url', '') and '/comments/' in i.get('url', '')
+    ]
+    urls = reddit_threads[:3]
+    print('\n'.join(urls))
+except Exception:
+    pass
 ")
 
 if [ -z "$REDDIT_URLS" ]; then
