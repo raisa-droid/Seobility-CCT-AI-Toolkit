@@ -11,11 +11,12 @@ Commands are slash commands in Claude Code. Available commands:
 | Sera URL | `/sera-url [URL]` | `.claude/commands/sera-url.md` |
 | Sera Keyword | `/sera-kw` or `/sera-keyword` followed by `primary kw: [...] seed kw: [...]` | `.claude/commands/sera-keyword.md` |
 | Brief | `/brief [paste brief feed]` | `.claude/commands/brief.md` |
+| Write | `/write [paste brief]` | `.claude/commands/write.md` |
 
-**Workflow:** Sera commands run first and output a brief feed block. Copy the brief feed block and run `/brief` to generate the full content brief.
+**Workflow:** Sera commands run first and output a brief feed block. Copy the brief feed block and run `/brief` to generate the full content brief. Copy the brief output and run `/write` to draft the blog post from it.
 
 ## Product context
-All Seobility product, feature, pricing, and brand files are in `product-context/`. The Brief command loads these automatically when looking up product URLs and ICP data. Files:
+All Seobility product, feature, pricing, and brand files are in `product-context/`. The Brief command loads these automatically when looking up product URLs and ICP data. Both Sera commands also check `seobility_features.md` at their writability/product-capability step (Step 4b in `/sera-url`, Step 4c in `/sera-kw`) before finalizing any Middle/Bottom suggestion — Middle and Bottom suggestions are product-proximate by definition and must not imply a capability Seobility doesn't have. Files:
 - `seobility_features.md` — full feature list and descriptions
 - `seobility_pricing.md` — pricing plans and limits
 - `seobility_use_cases.md` — ICP and use case pages

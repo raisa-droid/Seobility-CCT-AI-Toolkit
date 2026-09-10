@@ -12,9 +12,10 @@ Both trigger forms are valid. Label format is flexible — parsed regardless of 
 Generates content expansion suggestions for Seobility's English-language blog starting from a known Primary KW. Use when you have identified a keyword gap through external research and already know the Primary KW you want to target.
 
 ## Dependencies
-- `scripts/sera_dataforseo.sh` — SERP verification call (Step 4c-ii)
+- `scripts/brief_dataforseo.sh` — single-phrase SERP verification call (Step 4c-ii)
 - Notion MCP — Content Library cluster state check (Step 3)
 - Google Drive MCP — H1 List cannibalization check (Step 5)
+- `product-context/seobility_features.md` — product capability check for Middle/Bottom suggestions (Step 4c)
 
 ---
 
@@ -81,6 +82,8 @@ Before doing anything else, classify the Seed KW into one of four types:
 
 - **Named competitor topics** — topics involving a named competitor or named third-party tool that Seobility doesn't replace (e.g. "Semrush alternative", "Ahrefs vs Seobility", "Screaming Frog alternative", "Google Search Console"). Bottom or Middle only. Never Top. Hard gate applies in Step 4.
 
+  **AI search platform exception:** Named AI search platforms referenced as themselves for AEO purposes (e.g. Google AI Overviews, ChatGPT, Perplexity) are not named-competitor topics, even though they're named third-party products — they follow the AEO horizontal-expansion logic in Step 4a instead, and Top is valid for informational angles about the platform itself (e.g. "What Are Google AI Overviews and How Do They Work"). This exception never applies to named SEO-tool competitors Seobility actually competes with (Semrush, Ahrefs, Screaming Frog, etc.) — those remain hard-gated from Top.
+
 - **Named Seobility topics** — topics where the Seobility brand name is explicitly part of the search query (e.g. "Seobility review", "how to use Seobility", "Seobility pricing"). Already Bottom/owned. Expansion logic differs — go horizontal to adjacent use cases, not funnel deepening. Top does not apply.
 
 **Named entity rule for Seobility features:** Named Seobility features (Website Audit, Ranking Monitoring, Backlink Monitoring) at Top IS valid — e.g. "What is a website audit and why does it matter" is legitimately Top for Seobility's non-expert audience. This differs from named competitor topics where Top is never valid.
@@ -122,6 +125,8 @@ Count confirmed siblings by funnel stage:
 - How many Bottom exist?
 
 The target cluster ratio is **2 Top : 1 Middle : 1 Bottom**. This check feeds directly into Step 4 direction logic.
+
+**Alias awareness:** Exact Seed KW matching keeps the ratio count precise, but it can silently drop real siblings that cover the same practical territory under a different (but closely related) Seed KW label — e.g. a feature-specific tracking page filed under an adjacent seed, or a sub-topic piece filed under a different but clearly related seed in the same field. Before finalizing the count, review the results discarded for Seed KW mismatch and check whether any are topical aliases rather than unrelated content. Do not count aliases toward the ratio (the exact-match count stays the basis for ratio math), but do surface them explicitly: "Note: '[Topic/H1]' carries Seed KW '[X]', not '[target Seed KW]', but covers closely related territory — for context only, not counted toward the ratio." This keeps sibling counting real without loosening the Notion vocabulary.
 
 ---
 
@@ -171,27 +176,31 @@ Wait for the user's decision before continuing. The chosen funnel stage is the c
 
 ---
 
-## Step 4c — Writability check
+## Step 4c — Writability & product capability check
 
-Before finalising any candidate: can a writer produce this piece from real source material without hallucinating? If the topic requires claims about features, competitive distinctions, or search behaviour that don't exist as something people actually search for — kill the suggestion.
+Two independent checks must both pass before finalising any candidate:
+
+**Writability** — can a writer produce this piece from real source material without hallucinating? If the topic requires claims about features, competitive distinctions, or search behaviour that don't exist as something people actually search for — kill the suggestion.
+
+**Product capability (Middle/Bottom only)** — Middle and Bottom suggestions are product-proximate by definition: they imply Seobility does something specific. Before finalising a Middle or Bottom candidate, check that implied capability against `product-context/seobility_features.md` — do not infer capability from the topic name alone. Example of the failure this catches: a "page speed checker" Bottom angle implies Seobility measures page speed, but Seobility only measures server response time — a narrower, different capability. If a candidate overstates or misrepresents what the product actually does, kill it or reframe it to the capability Seobility genuinely has. This check does not apply to Top suggestions, which don't position the product.
 
 ---
 
 ## Step 4c-ii — SERP verification
 
-Run `sera_dataforseo.sh` via bash seeded with the best SERP-pattern candidate identified in Step 2:
+Look up metrics for the best SERP-pattern candidate identified in Step 2 — a single specific phrase, not a request for new keyword ideas. Use `brief_dataforseo.sh`, which calls `keyword_overview` for the exact phrase given, not `sera_dataforseo.sh` (that script's `keyword_suggestions` call generates *new* variants from a seed, which is the wrong question here and is why this check used to come back empty almost every time):
 
 ```
-./scripts/sera_dataforseo.sh "[best SERP-pattern candidate from Step 2]"
+./scripts/brief_dataforseo.sh "[best SERP-pattern candidate from Step 2]"
 ```
 
-Apply scoring rule: SV ≥ 150, KD ≤ 70.
+Returns `{ data_available, results: [{keyword, sv, kd, intent}] }` for that one phrase. Apply scoring rule: SV ≥ 150, KD ≤ 70.
 
 **This is a verification check only — it never overrides the user's Primary KW and never re-prompts.**
 
 - If the call surfaces a keyword with meaningfully higher SV or closer SERP-pattern alignment than the user's Primary KW within the same intent group, add a one-line note to the Flag column: *"SERP-check found: [keyword], SV [x], KD [x] — not applied."*
-- If the call finds nothing that beats the Primary KW, proceed silently — no note needed.
-- If the call fails or returns nothing, proceed silently — no note needed.
+- If the call finds nothing that beats the Primary KW, add a one-line note to the Flag column: *"4c-ii verification: no qualifying result — check ran, nothing beat the Primary KW."* This distinguishes "checked and found nothing" from "didn't run."
+- If the call fails or returns `data_available: false`, proceed silently — no note needed.
 
 ### SERP alignment tagging
 
@@ -360,10 +369,11 @@ After the brief feed block, add exactly this line:
 - Always run a web lookup before generating candidates (Step 2)
 - Always use the `web_search` tool directly for Step 2 web lookups. Do not use bash or any other method. If `web_search` is unavailable, stop and tell the user before proceeding. Never fall back to training knowledge and proceed silently.
 - Web lookup must actively inform H1 format and keyword targets — not just validate the topic
-- Always run cluster state check via Notion Content Library before deciding direction (Step 3 before Step 4). Notion search returns semantic results — always fetch each plausible result and confirm Seed KW matches exactly and Status = Published before counting as a confirmed sibling. Do not rely on search results alone.
+- Always run cluster state check via Notion Content Library before deciding direction (Step 3 before Step 4). Notion search returns semantic results — always fetch each plausible result and confirm Seed KW matches exactly and Status = Published before counting as a confirmed sibling. Do not rely on search results alone. Exact-match counting stays the basis for ratio math, but review discarded near-misses for topical alias overlap and surface any found as a note — don't let a real sibling under an adjacent Seed KW label silently disappear.
 - Step 4 direction is cluster-state-based, not performing-URL-based. Recommend funnel stage from ratio, then validate against Primary KW intent. Surface mismatches and wait for user decision before proceeding.
-- Named competitor Seed KW → never Top, hard gate in Step 4
+- Named competitor Seed KW → never Top, hard gate in Step 4. **Exception:** named AI search platforms referenced as themselves for AEO purposes (Google AI Overviews, ChatGPT, Perplexity) are not named-competitor topics — they follow AEO horizontal-expansion logic instead, and Top is valid for informational angles about the platform. Named SEO-tool competitors (Semrush, Ahrefs, Screaming Frog, etc.) remain hard-gated from Top.
 - Named Seobility Seed KW → never Top, horizontal to adjacent use cases only
+- **Product capability check (Step 4c, Middle/Bottom only):** before finalising a Middle or Bottom candidate, verify the implied capability against `product-context/seobility_features.md` — don't infer capability from the topic name alone. Kill or reframe any candidate that overstates what Seobility's product actually does.
 - 2:1:1 is the target ratio (Top:Middle:Bottom) — not 1:2:1
 - Horizontal expansion: business type angles and AI search angles only
 - Business type ICP swap is only valid when it changes both the search query and the content meaningfully

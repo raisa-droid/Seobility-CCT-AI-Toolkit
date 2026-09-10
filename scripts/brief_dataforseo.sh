@@ -2,8 +2,11 @@
 # brief_dataforseo.sh
 # Replicates: ACTIVE_Seobility_Brief — KW Overview Webhook
 # Usage: ./brief_kw_overview.sh "keyword one" "keyword two" "keyword three"
-# Returns JSON: { data_available, results: [{keyword, sv, intent}] }
+# Returns JSON: { data_available, results: [{keyword, sv, kd, intent}] }
 # Max 15 keywords. Filtering by SV threshold is Claude's job.
+# Also used by Sera's Step 4c-ii verification (single-phrase keyword_overview lookup) —
+# the right endpoint for "get metrics for this exact phrase", unlike sera_dataforseo.sh
+# which generates new variants from a seed via keyword_suggestions.
 
 set -euo pipefail
 
@@ -53,6 +56,7 @@ echo "$RESPONSE" | jq \
     {};
     (.[$item.keyword | ascii_downcase]) = {
       sv: ($item.keyword_info.search_volume // null),
+      kd: ($item.keyword_properties.keyword_difficulty // null),
       intent: ($item.search_intent_info.main_intent // null)
     }
   )) as $result_map |
@@ -62,6 +66,7 @@ echo "$RESPONSE" | jq \
     results: ($input_kws | map({
       keyword: .,
       sv: ($result_map[ascii_downcase] // {sv: null}).sv,
+      kd: ($result_map[ascii_downcase] // {kd: null}).kd,
       intent: ($result_map[ascii_downcase] // {intent: null}).intent
     }))
   }
