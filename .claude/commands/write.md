@@ -173,6 +173,11 @@ Some posts have a group of 3 or more parallel sections: the steps of a how-to, t
 Write the full post section by section, following these rules.
 
 ### Intro (before the first H2)
+- **Intro style:** pick one of these three, whichever fits the brief's core idea and reader best. Don't note the choice in the QA notes.
+  - **APP (Agree → Promise → Preview):** start from something the reader already knows or has experienced, then say what the post delivers and outline the route. The default for most posts. An optional problem hook between Agree and Promise is fine when the brief's core idea has one (e.g. "two page speed checkers can give the same page very different scores").
+  - **PAS (Problem → Agitate → Solution):** name the problem, show what it causes, then present the post as the solution. Keep the agitation factual (what happens), never fear, guilt, or exaggerated stakes. Best when the reader has an active problem, often in Bottom-funnel posts.
+  - **Myth-busting:** state a common belief, then correct it with the fact, then say what the post covers. Use it when the brief's core idea challenges a belief (e.g. "Duplicate content doesn't get your site penalized. Google usually picks one version and filters the rest.").
+  - Don't use other intro styles: no Before–After–Bridge, data-hook, answer-first (BLUF), AIDA, story-hook, or question-hook openings.
 - 80–150 words. No heading.
 - **No links in the intro.** Link placement starts from the first H2.
 - Middle / Bottom funnel only: the final paragraph of the intro includes the brand + solution sentence, written with `skills/product-plug.md`. Top funnel intros do not mention Seobility.
