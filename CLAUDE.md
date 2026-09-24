@@ -11,7 +11,7 @@ Commands are slash commands in Claude Code. Available commands:
 | Sera URL | `/sera-url [URL]` | `.claude/commands/sera-url.md` |
 | Sera Keyword | `/sera-kw` or `/sera-keyword` followed by `primary kw: [...] seed kw: [...]` | `.claude/commands/sera-keyword.md` |
 | Brief | `/brief [paste brief feed]` | `.claude/commands/brief.md` |
-| Write | `/write [paste brief]` | `.claude/commands/write.md` |
+| Write (draft, in testing) | `/write [paste brief]` | `.claude/commands/write.md` |
 
 **Workflow:** Sera commands run first and output a brief feed block. Copy the brief feed block and run `/brief` to generate the full content brief. Copy the brief output and run `/write` to draft the blog post from it.
 
@@ -27,6 +27,7 @@ All Seobility product, feature, pricing, and brand files are in `product-context
 ## Skills
 Reasoning skills that commands execute inline — no external calls. Located in `skills/`:
 - `golden-entity-map.md` — generates a Golden Entity Map (must_include, novel_information_gain, must_avoid arrays as JSON). Called by `/brief` at Step 1c.
+- `product-plug.md` — writes every Seobility product mention in a draft (brand + solution sentence, feature links, product screenshot placeholders), with placement, capability, and plan checks. Called by `/write` at Step 4.
 
 ## API scripts
 Bash scripts in `scripts/` handle all external API calls. Commands call these via bash — do not call any n8n webhooks directly.
@@ -38,6 +39,7 @@ Bash scripts in `scripts/` handle all external API calls. Commands call these vi
 | `brief_dataforseo_paa.sh` | PAA questions fetch | `/brief` (Step 1a) | `./scripts/brief_dataforseo_paa.sh "H1 title"` |
 | `brief_gemini.sh` | Gemini research synthesis | `/brief` (Step 1b) | `./scripts/brief_gemini.sh "H1 title"` |
 | `brief_reddit_miner.sh` | Reddit thread mining | `/brief` (Step 1e) | `./scripts/brief_reddit_miner.sh "H1 title"` |
+| `write_to_gdoc.py` | Converts the markdown draft to Google-Docs-ready HTML (no API call) | `/write` (Step 6) | `python3 scripts/write_to_gdoc.py draft.md draft.html` |
 
 Scripts require a `.env` file in the repo root with:
 - `DATAFORSEO_LOGIN`
@@ -52,7 +54,7 @@ These must be connected in your Claude Code session before running any command:
 | MCP | Used for | Commands |
 |---|---|---|
 | Notion | Content Library cluster state check; metadata fetch | `/sera-url`, `/sera-kw` |
-| Google Drive | H1 cannibalization list; Sitemap Cache for internal links | `/sera-url`, `/sera-kw`, `/brief` |
+| Google Drive | H1 cannibalization list; Sitemap Cache for internal links; draft Google Docs output | `/sera-url`, `/sera-kw`, `/brief`, `/write` |
 
 **Notion Content Library:** `collection://344eba87-0b26-817b-980a-000b96d30f1d`
 **H1 List (Google Drive):** file ID `1esAVjT_OACNuxU0hr2lTIDOTqZtIF_yduAau5c5TVlc`, tab `gid=382952304` — Seobility published content only, cannibalization checks
