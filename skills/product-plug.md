@@ -38,9 +38,11 @@ A plug is written only in these placements:
 | Placement | Top funnel | Middle / Bottom funnel |
 |---|---|---|
 | Intro (final paragraph) | No plug | Brand + solution sentence |
-| Body section | Only where the brief places a product or free-tool link | Only where the brief places a product or free-tool link |
+| Body section | Full plug where the brief places a product or free-tool link. Elsewhere, at most a one-line soft mention (see below) | Same |
 | Repeated-block item | Only in items where the brief places a product link, or where the item's label is a check/verify step that a Seobility feature does directly | Same |
 | Closing section (last sentence) | Brand + solution sentence, carrying the CTA link | Brand + solution sentence, carrying the CTA link |
+
+**Soft mentions in sections the brief didn't flag:** a single sentence (brand + feature + the problem it fixes) with no link, no plan details, and no separate paragraph, woven into the section's existing copy. Only where a Seobility feature directly addresses that section's task, and never in Top-funnel intros. A soft mention counts as that section's one plug, and at most one soft mention in every three sections, so the post doesn't turn into a series of product nods. Example, in a section on why speed scores differ: "Seobility's Website Audit flags slow-loading pages across your whole site, which helps you tell a one-off bad score from a real pattern."
 
 **Brief flags come first.** If the brief's Flags & editorial notes limit where Seobility may appear (e.g. "keep Seobility's mention scoped to the dedicated section"), follow the flag even where this table allows a plug, and note the skipped placement in QA.
 
@@ -75,9 +77,9 @@ Then apply these limits:
 
 ### The brand + solution sentence
 
-Name the brand, the feature, and what it does, in the same sentence, with concrete tasks rather than adjectives:
+Name the brand, the feature, and the problem it fixes, in the same sentence, with concrete tasks rather than adjectives. The reader should come away knowing exactly which problem Seobility solves and with which feature. Opening with the problem or generic fix and then introducing Seobility as the faster way to do it is fine, as long as that brand + feature + problem sentence is there:
 
-**Seobility's [Feature] + [does 1–3 specific tasks from the features file] + [reader outcome, optional].**
+**Seobility's [Feature] + [fixes/finds the specific problem through 1–3 tasks from the features file] + [reader outcome, optional].**
 
 - ✅ "Seobility's Website Audit crawls your site and flags broken links, missing meta descriptions, and slow-loading pages, sorted by priority."
 - ❌ "Find broken links, missing meta descriptions, and slow pages, all in one place!" (no brand entity: nothing for an AI engine to attach the facts to)
@@ -142,6 +144,7 @@ For each placement, return:
 
 - Placement by funnel: Top funnel has no intro plug, only the closing sentence and brief-placed body links. Middle/Bottom adds the brand + solution sentence to the final intro paragraph.
 - Body and repeated-block plugs only where the brief places a product link, or (repeated blocks) where a check/verify label is done directly by a Seobility feature.
+- Sections without a brief-placed product link may get a one-line soft mention (no link), max one per three sections, only where a feature directly addresses the section's task.
 - One full plug per section. If the brief links several features in one section, the most relevant one leads with a full plug and the others get one sentence each. Never drop a brief-linked feature. No more than one plug in every three repeated-block items. One free tool link per draft, only where the brief places it.
 - No feature fits → no plug. Note it in QA.
 - Every task named must be in `seobility_features.md`. State plan limits. Never plug "Coming soon" features.

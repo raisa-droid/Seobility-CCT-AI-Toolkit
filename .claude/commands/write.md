@@ -212,7 +212,7 @@ These examples show the pattern only. Facts in them still go through Step 2.
 
 ### Keywords and entities in body copy
 - **Primary KW:** within the first 100 words of the intro, and once in the closing section. In the body, watch for generic references that the Primary KW can naturally replace, and swap some of them, not all. This works when the Primary KW is a noun phrase that stands in for a generic word: "page speed checker" replaces "tool" ("which page speed checker", "these page speed checker tools"). It often doesn't work when the Primary KW is a question, a task, or a long phrase ("how to improve page speed", "what is crawl budget"). In that case, don't force it: use it where a sentence genuinely talks about that exact thing, and rely on close variants elsewhere. These swaps are opportunities, not a quota. If the Primary KW offers few natural swaps, say so in the QA notes. Elsewhere, use variants and synonyms rather than repeating the exact phrase.
-- **Secondary KWs:** each used at least once in the body. When a Secondary KW is in a heading, use it (or a close variant) in that section's body too.
+- **Secondary KWs:** each used at least once in the body. When a Secondary KW is in a heading, use it (or a close variant) in that section's body too. A Secondary KW that isn't in any heading goes, exact or near-exact, in the first paragraph of the section most related to it: search engines and AI engines weigh a section's opening most when deciding what it covers.
 - **Contextual KWs:** body copy only, each at least once, in the section where it fits the topic best.
 - **Entities:** every entity in a section's italic `Entities:` list appears in that section. Explain each one in plain words the first time it appears (e.g. "crawl budget, the number of pages Googlebot will crawl on your site in a given time"). Mention it alongside the related terms and entities in the same section, so search engines can see how the concepts connect. Remove the italic entity lines from the draft itself.
 - **Tie every entity to an action or outcome.** Never drop an entity as a standalone definition. Explain it inside a sentence about what the reader does with it or what it causes.
@@ -240,7 +240,7 @@ These examples show the pattern only. Facts in them still go through Step 2.
 - FAQ answers should not repeat body copy word for word. Add something new, or give the tightest version of the answer.
 
 ### Closing section
-- The last section before the FAQs (after the final body H2). If the post has FAQs, they are always the final section, after the closing section. A short heading that names the next step, never "Conclusion" or "Key takeaways" (that heading is used after the intro).
+- The last section before the FAQs (after the final body H2). If the post has FAQs, they are always the final section, after the closing section. Its heading carries a Primary or Secondary KW variation (e.g. "Turn Your Page Speed Checker Results Into Faster Pages"), never a bare "Conclusion", "Final Thoughts", or "Key Takeaways" (that heading is used after the intro). A brand CTA heading (e.g. "Keep Your Page Speed in Check With Seobility") is allowed only when the topic ties directly to a Seobility product, meaning the brief places at least one product link.
 - 80–150 words, including the Primary KW once: recap the one or two things the reader should do next, then end with the brand + solution sentence from `skills/product-plug.md` (all funnels), carrying a single CTA link to the brief's CTA URL, framed as a helpful next step. Encouraging, never guilt- or fear-based.
 
 ### Placeholder format
@@ -259,6 +259,7 @@ Every spot that needs human work uses one format, so editors can find them all b
 - No exaggerated claims, no overpromising ("guaranteed rankings", "dominate the SERPs").
 - No AI filler: avoid "delve", "dive in", "unlock", "unleash", "elevate", "leverage", "game-changer", "in today's fast-paced digital world", "it's important to note that", "navigating the landscape", "robust", "seamless", "actually", "harness", "comprehensive" and "holistic" (as filler adjectives), "look no further", "overall", "to sum up".
 - No AI patterns either: "Whether you're a beginner or a pro…", "It's not just X, it's Y", "In conclusion", "At the end of the day", rhetorical-question openers ("Ever wondered why…?"), reflexive groups of three (use as many items as there really are), and ending every section with a one-line summary of what it just said. Vary sentence length and paragraph openings.
+- **Sentence starters:** within one section, the same word shouldn't start more than two sentences (e.g. not "Seobility… Seobility… Seobility…" or "You… You… You…").
 - Also banned: staccato fragment stacking ("Better rankings. Faster fixes. Less guesswork."), the parallel-comparison-then-label pattern ("X is for A. Y is for B. That's the difference."), and the corrective "That's not X, that's Y".
 - **Explicit dates, not relative time.** Write "Since the March 2024 core update", not "recently", "this year", "lately", or "nowadays". Undated time words go stale and give AI engines nothing to extract. Verify dates per Step 2b.
 - **Evaluating competitor or third-party tools (listicles and comparisons only):**
@@ -300,6 +301,7 @@ Before outputting, check the draft against this list silently and fix anything t
 - Each section's format matches its question type (definition, how-to, comparison, yes/no, duration, list)
 - "Google confirms" only with a Google source. Unconfirmed practice is worded as belief, not fact
 - Subtopics with their own internal link page get 1–2 sentences + the link, not a mini-post
+- Closing heading carries a KW variation (brand CTA only for product-relevant topics). No word starts more than two sentences in one section. Secondary KWs not in a heading appear in the first paragraph of their section
 - No relative time words ("recently", "this year"). No unflagged competitor names or links. No AI patterns
 - Every internal link placed exactly once, anchor built from the target's confirmed topic (Step 2c), 3–6 words, unique per destination
 - FAQ answers neutral and encyclopedic, no first person
