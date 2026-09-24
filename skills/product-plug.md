@@ -47,7 +47,7 @@ A plug is written only in these placements:
 **Brief flags come first.** If the brief's Flags & editorial notes limit where Seobility may appear (e.g. "keep Seobility's mention scoped to the dedicated section"), follow the flag even where this table allows a plug, and note the skipped placement in QA.
 
 Then apply these limits:
-- **One full plug per section at most.** A repeated-block group counts each item as a section, but no more than one plug in every three items. Repeating "Seobility's X lets you…" in every step reads as an ad and weakens the signal.
+- **One full plug per section at most.** A repeated-block group counts each item as a section, with two spacing rules: never a plug in two items in a row, and no more than one plug in every three items (e.g. items 1, 4, 7 at most in a group of seven). Repeating "Seobility's X lets you…" in every step reads as an ad and weakens the signal.
 - **Several features linked in one section: lead + short mentions, never drop.** If the brief links more than one Seobility feature in the same section, don't drop any of them:
   - **Lead feature:** the one that most directly solves the H1's problem (tie-break: the one the brief's writer direction mentions first). It gets the full plug: brand + feature + concrete tasks, how it helps with this section's task, and any plan caveat.
   - **Other features:** one sentence each, still with brand + feature + what it does in the same sentence, its product link, and its plan caveat. No further detail.
@@ -88,7 +88,7 @@ Name the brand, the feature, and the problem it fixes, in the same sentence, wit
 ### Weave it in, don't bolt it on
 
 - **1–2 sentences**, woven into the section's existing copy, as the natural next step of what the paragraph is already saying. Not a standalone promo paragraph, and not a separate "How Seobility helps" block unless the brief's Structure has one.
-- **Link the feature name** to its product URL the first time it appears in the section: `[Website Audit](https://www.seobility.net/en/website-audit/)`. Use the brief's URL, or the URL listed in `seobility_features.md`.
+- **Link the brand + feature name** to its product URL the first time it appears in the section, so the anchor meets the 3-word minimum: `[Seobility's Website Audit](https://www.seobility.net/en/website-audit/)`. Use the brief's URL, or the URL listed in `seobility_features.md`.
 - **Name first, then "we".** The first reference in the section is "Seobility's [Feature]". After that, "we" and "our" are fine.
 - **Official names only**, exactly as in `Seobility_tone_of_voice.md`: Website Audit, Ranking Monitoring, Backlink Monitoring, Uptime Monitoring; tools: SEO Checker, Ranking Checker, Backlink Checker, Keyword Research Tool, TF\*IDF Tool, Redirect Checker, SERP Snippet Generator, Keyword Checker, SEO Compare.
 - **Voice:** helpful, not salesy. Show how the feature helps with this section's task. Don't copy marketing copy from the features file verbatim ("Unlock your website's full potential"): pull out the facts and write them in the draft's voice. No superlatives, no comparisons to competitors. Banned hype words: best, ultimate, game-changing, revolutionary, unmatched, powerful. Use objective, action-driven verbs instead: automates, tracks, surfaces, identifies, monitors, flags.
@@ -96,13 +96,13 @@ Name the brand, the feature, and the problem it fixes, in the same sentence, wit
 ### Examples by placement
 
 **Intro (Middle / Bottom), final paragraph:**
-> In this guide, you'll learn how to find and fix the most common technical SEO issues, step by step. If you'd rather not check 300+ factors by hand, Seobility's [Website Audit](https://www.seobility.net/en/website-audit/) crawls every page on your site and sorts the issues it finds by priority, so you know what to fix first.
+> In this guide, you'll learn how to find and fix the most common technical SEO issues, step by step. If you'd rather not check 300+ factors by hand, [Seobility's Website Audit](https://www.seobility.net/en/website-audit/) crawls every page on your site and sorts the issues it finds by priority, so you know what to fix first.
 
 **Body section (brief places a Ranking Monitoring link):**
-> After a core update, the first thing to check is which pages lost positions and for which keywords. Seobility's [Ranking Monitoring](https://www.seobility.net/en/ranking-monitoring/) tracks your keyword positions daily on paid plans and shows exactly which landing pages dropped, which makes that check a matter of minutes.
+> After a core update, the first thing to check is which pages lost positions and for which keywords. [Seobility's Ranking Monitoring](https://www.seobility.net/en/ranking-monitoring/) tracks your keyword positions daily on paid plans and shows exactly which landing pages dropped, which makes that check a matter of minutes.
 
 **Repeated-block item (label "How to check it"):**
-> **How to check it:** Seobility's [Website Audit](https://www.seobility.net/en/website-audit/) flags every page with a missing or poorly optimized meta description, so you can fix them one URL at a time.
+> **How to check it:** [Seobility's Website Audit](https://www.seobility.net/en/website-audit/) flags every page with a missing or poorly optimized meta description, so you can fix them one URL at a time.
 
 **Closing section (last sentence, carries the CTA):**
 > Seobility's Website Audit checks your whole site for these issues automatically and emails you when a critical one appears, so [try it free](https://www.seobility.net/en/pricing/) and see what it finds on your site.
@@ -145,11 +145,11 @@ For each placement, return:
 - Placement by funnel: Top funnel has no intro plug, only the closing sentence and brief-placed body links. Middle/Bottom adds the brand + solution sentence to the final intro paragraph.
 - Body and repeated-block plugs only where the brief places a product link, or (repeated blocks) where a check/verify label is done directly by a Seobility feature.
 - Sections without a brief-placed product link may get a one-line soft mention (no link), max one per three sections, only where a feature directly addresses the section's task.
-- One full plug per section. If the brief links several features in one section, the most relevant one leads with a full plug and the others get one sentence each. Never drop a brief-linked feature. No more than one plug in every three repeated-block items. One free tool link per draft, only where the brief places it.
+- One full plug per section. If the brief links several features in one section, the most relevant one leads with a full plug and the others get one sentence each. Never drop a brief-linked feature. In repeated blocks: never in two items in a row, and no more than one plug in every three items. One free tool link per draft, only where the brief places it.
 - No feature fits → no plug. Note it in QA.
 - Every task named must be in `seobility_features.md`. State plan limits. Never plug "Coming soon" features.
 - Prices and limits from `seobility_pricing.md` only, always flagged in QA.
 - 1–2 sentences, woven into existing copy. Brand + feature + concrete tasks in one sentence. Name first, then "we".
-- Official feature names only. Link the feature name to its product URL on first mention in the section.
+- Official feature names only. Link "Seobility's [Feature]" (3+ words) to its product URL on first mention in the section.
 - No click paths, menu names, button labels, or report names. Describe what the feature does and shows.
 - Product screenshot placeholders only where the interface helps the reader, with alt text, max one per section.

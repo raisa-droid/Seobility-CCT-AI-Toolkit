@@ -221,6 +221,10 @@ If project files do not contain a relevant URL, do a live lookup on seobility.ne
 
 Product and free tool links belong inline in the Structure section only — never in the Internal links section. Internal links is for content-to-content links only.
 
+**Product link density:** place product links sparingly, so the draft informs first and sells second.
+- **Per-post maximum for body product links**, not counting a section dedicated to Seobility or the closing CTA: Top funnel 1, Middle 2, Bottom 2. Pick the placements where a Seobility feature most directly does the section's job, and drop the rest.
+- **Listicles and repeated blocks:** at most one product link per three items, never in two items in a row.
+
 **Use case page cross-reference:** Before generating the Structure section, check whether any of the following Seobility use case pages is relevant to the H1 topic:
 
 - seobility.net/en/seobility-for-businesses/
@@ -298,7 +302,7 @@ Contextual KWs:
 
 **Structure (Suggested H2 Skeleton. Optimize each H2/H3 copy for SEO/AEO.)**
 
-[H2/H3 skeleton. Each heading is prefixed with its level tag. Format:
+[H2/H3 skeleton. Each heading is prefixed with its level tag and written in title case (see Rules). Format:
 
 H2 — [Section title]
 [1–3 sentences or short bullet list of writer direction for this section. Where a Must Include entity maps to this section, translate its Note into a direct writer instruction — do not copy the Note verbatim. Where a selected NIG angle maps to this section, translate its description into writer direction for what the section must explore. Where a selected Reddit gap maps to this section, translate it into writer direction for what the section must answer or resolve.]
@@ -412,6 +416,7 @@ Note: Must Avoid items are not listed here. They are applied silently during str
 - Must Avoid items are never surfaced in the brief output. They operate as silent guardrails during structure generation only.
 - Product and free tool links go inline in the Structure section only — never in the Internal links section.
 - Free tool links are capped at 1 per brief.
+- Product link density: body product links (not counting a dedicated Seobility section or the closing CTA) are capped at a maximum of Top 1, Middle 2, Bottom 2 per brief. In listicles and repeated blocks, at most one product link per three items, never in two items in a row.
 - Internal links section is content-to-content only. Generated from sitemap in Step 2b — 4 blog max, 1 wiki max, 5 combined cap.
 - Wiki URLs qualify only on exact match against confirmed contextual KWs or entities. Do not force a wiki URL if no exact match exists.
 - Internal links section format: full URLs only, no placement notes. Placement notes belong in the Structure section.
@@ -434,6 +439,7 @@ Note: Must Avoid items are not listed here. They are applied silently during str
 - All product and internal link URLs in the brief use full format (https://www.seobility.net/...) so the writer can click and open directly.
 - No dividing lines (---) between sections in the brief output.
 - Keyword lists use bullet points, no inline usage notes.
+- All headings (H1, H2, H3, FAQ questions) are written in title case: capitalize every word except articles (a, an, the), coordinating conjunctions (and, but, or, nor, for, so, yet), and prepositions of three letters or fewer (to, of, in, on, at, by, for, via), unless first or last. Short verbs and pronouns are capitalized (Is, Do, You). Keep brand and product names as written.
 - Funnel stage language: Top / Middle / Bottom — never ToFu / MoFu / BoFu.
 - Brand field is blocking — if the brand is not Seobility, product link lookup, sitemap URLs, and CTA logic will differ. Flag this and proceed with what is available.
 - Output format: deliver the brief inline in chat only. Do not create a .md file or present a download link.

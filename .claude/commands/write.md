@@ -164,7 +164,7 @@ Some posts have a group of 3 or more parallel sections: the steps of a how-to, t
 4. **Each item opens with a direct 1–2 sentence answer** before the first label, so the item stands alone as a citable block.
 5. **Every label carries real, specific detail**: settings, thresholds, examples, edge cases, or the exact place to check something. This depth is the information gain that makes the page worth visiting. The answer block is always complete. Never hold information back or write a deliberately partial answer to force a click.
 6. **Consistency.** Same labels, same order, in every item of the group. If a label genuinely doesn't apply to one item, drop it for that item rather than padding it, and keep the rest in order.
-7. **Product mentions inside repeated blocks** are written with `skills/product-plug.md`, which limits them to items where the brief places a product link or a Seobility feature directly does the check, and to no more than one plug in every three items.
+7. **Product mentions inside repeated blocks** are written with `skills/product-plug.md`: only in items where the brief places a product link or a Seobility feature directly does the check, never in two items in a row, and no more than one plug in every three items.
 
 ---
 
@@ -178,7 +178,8 @@ Write the full post section by section, following these rules.
 - Middle / Bottom funnel only: the final paragraph of the intro includes the brand + solution sentence, written with `skills/product-plug.md`. Top funnel intros do not mention Seobility.
 - Use the Primary KW within the first 100 words, naturally.
 - Open on the reader's situation or question from the brief's `Reader` field, then say plainly what the post will give them. No throat-clearing ("In today's digital landscape…").
-- Define the main topic in a plain "[Topic] is…" sentence within the intro or, at the latest, the first paragraph of the first H2, so AI engines have a clean definition to extract. Skip this only when the topic is a task rather than a concept (e.g. "How to speed up WordPress"), and state what the task achieves instead.
+- **Name the reader's world in the first paragraph.** The first paragraph on its own should make clear who the post is for and what it's about (e.g. therapists and their practice, not a generic "you have a website" opening that could fit any business).
+- Define the main topic in a plain "[Topic] is…" sentence within the intro or, at the latest, the first paragraph of the first H2, **only when the brief's Reader wouldn't already know the term** (e.g. "duplicate content" for beginners). Skip it when the term is self-explanatory to that reader (e.g. "therapist marketing" for therapists) or when the topic is a task rather than a concept, and state what the post or task achieves instead.
 
 ### Key takeaways (directly after the intro)
 - Always added, even though the brief does not list it.
@@ -219,6 +220,10 @@ These examples show the pattern only. Facts in them still go through Step 2.
   - ❌ "Render-blocking resources are CSS and JavaScript files. Render-blocking resources slow down pages."
   - ✅ "If a page stays blank for a second before anything appears, render-blocking resources are a common cause: CSS and JavaScript files the browser must finish loading before it can show the page."
   - Branded or named entities (Google Search Console, Core Web Vitals, Lighthouse) use their exact name, never an invented synonym.
+- **Topical terms.** Use the everyday vocabulary of the topic and of the reader's world, even when those words aren't in the keyword list. They tell search engines what the page is really about, and they make the copy sound written for insiders. Take them from the topic itself and from the brief's Reader field. There are two kinds:
+  - **Topic vocabulary:** the verbs and concepts that come with the subject. Metrics and reporting: measure, calculate, benchmark, baseline, ROI, KPI, trend, report. Technical SEO and site audits: crawl, index, render, status code, redirect chain, prioritize, fix.
+  - **Reader vocabulary:** the nouns of the reader's own world. Agencies and freelancers: clients, retainer, client reporting, white label, onboarding.
+  - Use them where they read naturally. They're not keywords to repeat or place in headings.
 - Never force a keyword into a sentence where it reads awkwardly. Never bold keywords. No keyword stuffing: if a phrase starts to feel repetitive when read aloud, swap in a variant.
 - **Real-world context.** Where a Reddit scenario is tagged to a section ("recommend using in: [H2]"), use it in that section as a real example. Paraphrase it or quote a short passage (one or two sentences) from the thread, and link to the thread using its source URL from the brief, e.g. "One [small business owner on Reddit](https://www.reddit.com/…) described…". Never name the username. After each Reddit mention, insert `[TODO · SCREENSHOT: add screenshot of this Reddit thread: [thread URL]; alt text: …]`, with the thread's full URL (so the editor doesn't have to look it up in the brief) and suggested alt text that describes what the thread shows in plain words. The screenshot keeps the example intact if the post is later deleted or removed.
 - **Listicles (E-E-A-T).** If the brief includes the E-E-A-T writer note, write tool entries in an evaluated voice ("our take", "what stood out", "best for"). Do not invent hands-on test results, scores, or observations. Where a first-hand detail would strengthen an entry, insert `[TODO · TEAM: add first-hand observation, e.g. …]` for the editor to fill.
@@ -228,7 +233,7 @@ These examples show the pattern only. Facts in them still go through Step 2.
 - **All product mentions are written with `skills/product-plug.md`.** Read it before drafting and run it inline (no external call) for every placement it covers: the final intro paragraph (Middle/Bottom), body sections where the Structure places a product or free-tool link, repeated-block items, and the last sentence of the closing section. The skill decides whether a plug belongs, picks and checks the feature, and returns 1–2 sentences to weave into the section's existing copy, plus QA notes.
 - Do not write product mentions outside the skill, and do not add product mentions the brief and the skill don't call for.
 - **Don't re-cover linked pages.** When a subtopic has its own page in the brief's Internal links (e.g. a full post on canonical tags), cover it in 1–2 sentences woven into the existing copy and link to that page, instead of writing a mini version of it. If the brief's writer direction explicitly asks for that subtopic in depth, follow the brief and note the overlap in QA.
-- **Internal links:** place every URL in the brief's Internal links list once, in the section where it fits best (use the Structure's placement notes where given). Build the anchor from the target page's confirmed topic (Step 2c), not the slug: 3–6 words, exact-match or near-exact-match to that page's main keyword where it reads naturally. Each anchor is unique to its destination: never use the same anchor phrase for two different URLs. Never "click here", "learn more", or a bare URL.
+- **Internal links:** place every URL in the brief's Internal links list once, in the section where it fits best (use the Structure's placement notes where given). Build the anchor from the target page's confirmed topic (Step 2c), not the slug: 3–6 words, exact-match or near-exact-match to that page's main keyword where it reads naturally. Each anchor is unique to its destination: never use the same anchor phrase for two different URLs. Never "click here", "learn more", or a bare URL. When two linked pages look similar (e.g. a blog post and a use case page on the same topic), write anchors that make the difference obvious, so readers don't think the same page is linked twice.
 - **All anchors are at least 3 words**, internal and external ("Google's PageSpeed Insights documentation", not "Google's documentation" or "page speed").
 - **Link format:** markdown links with full URLs, e.g. `[Website Audit](https://www.seobility.net/en/website-audit/)`.
 
@@ -259,6 +264,7 @@ Every spot that needs human work uses one format, so editors can find them all b
 - No exaggerated claims, no overpromising ("guaranteed rankings", "dominate the SERPs").
 - No AI filler: avoid "delve", "dive in", "unlock", "unleash", "elevate", "leverage", "game-changer", "in today's fast-paced digital world", "it's important to note that", "navigating the landscape", "robust", "seamless", "actually", "harness", "comprehensive" and "holistic" (as filler adjectives), "look no further", "overall", "to sum up".
 - No AI patterns either: "Whether you're a beginner or a pro…", "It's not just X, it's Y", "In conclusion", "At the end of the day", rhetorical-question openers ("Ever wondered why…?"), reflexive groups of three (use as many items as there really are), and ending every section with a one-line summary of what it just said. Vary sentence length and paragraph openings.
+- No announcer transitions that introduce the brand or the next point instead of making it: "This is where Seobility comes in", "That's where X helps", "Enter X", "The checking part is where…". Make the point directly.
 - **Sentence starters:** within one section, the same word shouldn't start more than two sentences (e.g. not "Seobility… Seobility… Seobility…" or "You… You… You…").
 - Also banned: staccato fragment stacking ("Better rankings. Faster fixes. Less guesswork."), the parallel-comparison-then-label pattern ("X is for A. Y is for B. That's the difference."), and the corrective "That's not X, that's Y".
 - **Explicit dates, not relative time.** Write "Since the March 2024 core update", not "recently", "this year", "lately", or "nowadays". Undated time words go stale and give AI engines nothing to extract. Verify dates per Step 2b.
@@ -287,7 +293,7 @@ Before outputting, check the draft against this list silently and fix anything t
 - Every H2/H3 from the brief is present, in order
 - Every writer direction item is carried out
 - Key takeaways block present after the intro, 3–5 self-contained bullets
-- Main topic defined in a plain "[Topic] is…" sentence early (unless the topic is a task)
+- First paragraph names the reader's world. Main topic defined early only if the Reader wouldn't already know the term
 - Every section entity appears in its section, explained on first use
 - Primary KW in the H1, the first 100 words, at least one H2, and the closing section. Natural swap opportunities for generic words used where the KW allows it
 - No heading repeats the H1. Key Takeaways heading is "Key Takeaways: [H1 paraphrase with Primary KW]". FAQs heading is "FAQs About [KW]". All headings in title case
