@@ -125,10 +125,14 @@ The brief's writer direction sometimes calls for other specifics: a Google guide
 - **"Many SEOs believe… / A common view is…"** for widely held but unconfirmed practice. Never present these as fact.
 - If Google has explicitly said something is *not* a ranking factor, don't imply that it is.
 
+### 2c — Confirm internal link targets
+
+For every URL in the brief's Internal links list, run `web_fetch` and note the page's actual H1 and topic. Don't infer the topic from the slug. The anchor text in Step 4 is built from this confirmed topic. If a URL is broken, redirects somewhere unexpected, or covers a different topic than the brief assumed, still place it only if it genuinely fits, and note the problem in the QA notes under Deviations from brief.
+
 Rules for this step:
 - External data supports the brief's structure. Do not add new sections, angles, or subtopics from what you find.
 - Never invent statistics, study results, percentages, quotes, customer stories, or Seobility test results.
-- External links in the draft are limited to: sources from 2a and 2b, the brief's External references, and Reddit threads (Step 4). No other external links.
+- External links in the draft are limited to: sources from 2a and 2b, the brief's External references, Reddit threads (Step 4), and, in listicles and comparisons, a tool's own official docs or pricing page (max 1–2 per tool). No other external links.
 
 ---
 
@@ -211,6 +215,10 @@ These examples show the pattern only. Facts in them still go through Step 2.
 - **Secondary KWs:** each used at least once in the body. When a Secondary KW is in a heading, use it (or a close variant) in that section's body too.
 - **Contextual KWs:** body copy only, each at least once, in the section where it fits the topic best.
 - **Entities:** every entity in a section's italic `Entities:` list appears in that section. Explain each one in plain words the first time it appears (e.g. "crawl budget, the number of pages Googlebot will crawl on your site in a given time"). Mention it alongside the related terms and entities in the same section, so search engines can see how the concepts connect. Remove the italic entity lines from the draft itself.
+- **Tie every entity to an action or outcome.** Never drop an entity as a standalone definition. Explain it inside a sentence about what the reader does with it or what it causes.
+  - ❌ "Render-blocking resources are CSS and JavaScript files. Render-blocking resources slow down pages."
+  - ✅ "If a page stays blank for a second before anything appears, render-blocking resources are a common cause: CSS and JavaScript files the browser must finish loading before it can show the page."
+  - Branded or named entities (Google Search Console, Core Web Vitals, Lighthouse) use their exact name, never an invented synonym.
 - Never force a keyword into a sentence where it reads awkwardly. Never bold keywords. No keyword stuffing: if a phrase starts to feel repetitive when read aloud, swap in a variant.
 - **Real-world context.** Where a Reddit scenario is tagged to a section ("recommend using in: [H2]"), use it in that section as a real example. Paraphrase it or quote a short passage (one or two sentences) from the thread, and link to the thread using its source URL from the brief, e.g. "One [small business owner on Reddit](https://www.reddit.com/…) described…". Never name the username. After each Reddit mention, insert `[TODO · SCREENSHOT: add screenshot of this Reddit thread: [thread URL]; alt text: …]`, with the thread's full URL (so the editor doesn't have to look it up in the brief) and suggested alt text that describes what the thread shows in plain words. The screenshot keeps the example intact if the post is later deleted or removed.
 - **Listicles (E-E-A-T).** If the brief includes the E-E-A-T writer note, write tool entries in an evaluated voice ("our take", "what stood out", "best for"). Do not invent hands-on test results, scores, or observations. Where a first-hand detail would strengthen an entry, insert `[TODO · TEAM: add first-hand observation, e.g. …]` for the editor to fill.
@@ -220,11 +228,12 @@ These examples show the pattern only. Facts in them still go through Step 2.
 - **All product mentions are written with `skills/product-plug.md`.** Read it before drafting and run it inline (no external call) for every placement it covers: the final intro paragraph (Middle/Bottom), body sections where the Structure places a product or free-tool link, repeated-block items, and the last sentence of the closing section. The skill decides whether a plug belongs, picks and checks the feature, and returns 1–2 sentences to weave into the section's existing copy, plus QA notes.
 - Do not write product mentions outside the skill, and do not add product mentions the brief and the skill don't call for.
 - **Don't re-cover linked pages.** When a subtopic has its own page in the brief's Internal links (e.g. a full post on canonical tags), cover it in 1–2 sentences woven into the existing copy and link to that page, instead of writing a mini version of it. If the brief's writer direction explicitly asks for that subtopic in depth, follow the brief and note the overlap in QA.
-- **Internal links:** place every URL in the brief's Internal links list once, in the section where it fits best (use the Structure's placement notes where given). Use descriptive anchor text of 3–6 words that says what the linked page covers, ideally including that page's main keyword. Vary anchor wording across links. Never "click here", "learn more", or a bare URL.
+- **Internal links:** place every URL in the brief's Internal links list once, in the section where it fits best (use the Structure's placement notes where given). Build the anchor from the target page's confirmed topic (Step 2c), not the slug: 3–6 words, exact-match or near-exact-match to that page's main keyword where it reads naturally. Each anchor is unique to its destination: never use the same anchor phrase for two different URLs. Never "click here", "learn more", or a bare URL.
 - **All anchors are at least 3 words**, internal and external ("Google's PageSpeed Insights documentation", not "Google's documentation" or "page speed").
 - **Link format:** markdown links with full URLs, e.g. `[Website Audit](https://www.seobility.net/en/website-audit/)`.
 
 ### FAQs
+- **Neutral, encyclopedic tone** in FAQ answers: no "we", "our", or "you'll love". This is a flat exception to the brand voice, because answer engines lift FAQ answers on their own. The rest of the post keeps the Seobility voice.
 - Answer each question in 2–3 sentences, 40–60 words. The first sentence answers the question directly. No preamble, no "Great question".
 - Each answer contains at least one concrete detail (a number, named tool, threshold, or timeframe) where the topic allows.
 - Each answer must work on its own, without the rest of the post.
@@ -248,9 +257,14 @@ Every spot that needs human work uses one format, so editors can find them all b
 - Address the reader as "you". Seobility is "we" and "our" where it speaks.
 - Beginner-friendly: explain any technical term the first time you use it, in plain words. Short sentences. Active voice.
 - No exaggerated claims, no overpromising ("guaranteed rankings", "dominate the SERPs").
-- No AI filler: avoid "delve", "dive in", "unlock", "unleash", "elevate", "leverage", "game-changer", "in today's fast-paced digital world", "it's important to note that", "navigating the landscape", "robust", "seamless", "actually".
+- No AI filler: avoid "delve", "dive in", "unlock", "unleash", "elevate", "leverage", "game-changer", "in today's fast-paced digital world", "it's important to note that", "navigating the landscape", "robust", "seamless", "actually", "harness", "comprehensive" and "holistic" (as filler adjectives), "look no further", "overall", "to sum up".
 - No AI patterns either: "Whether you're a beginner or a pro…", "It's not just X, it's Y", "In conclusion", "At the end of the day", rhetorical-question openers ("Ever wondered why…?"), reflexive groups of three (use as many items as there really are), and ending every section with a one-line summary of what it just said. Vary sentence length and paragraph openings.
+- Also banned: staccato fragment stacking ("Better rankings. Faster fixes. Less guesswork."), the parallel-comparison-then-label pattern ("X is for A. Y is for B. That's the difference."), and the corrective "That's not X, that's Y".
 - **Explicit dates, not relative time.** Write "Since the March 2024 core update", not "recently", "this year", "lately", or "nowadays". Undated time words go stale and give AI engines nothing to extract. Verify dates per Step 2b.
+- **Evaluating competitor or third-party tools (listicles and comparisons only):**
+  - Frame weaknesses as fit, never as "bad" or "useless": "[Tool] excels at [strength], but may be a stretch for teams that need [specific need]."
+  - Default to attribution phrasing for cons ("Users frequently report…", "A common trade-off for smaller teams is…"), but only for feedback that exists in a verified source: the brief's Reddit data, or a public page fetched in Step 2. Never invent reviews, quotes, or complaints.
+  - Reserve external links for specific or disputable claims, at most 1–2 per tool, and link the tool's own official docs or pricing page rather than third-party review sites.
 - **Competitors.** Outside listicles and comparisons, don't name Seobility competitors (see `Seobility_brand_summary.md`) unless they are in the brief's entity lists. Never disparage a competitor. Never link to competitor domains, except their studies under the Step 2a flag rule.
 - No em dashes. Use commas, colons, parentheses, or separate sentences instead.
 - No emojis in blog copy.
@@ -287,7 +301,10 @@ Before outputting, check the draft against this list silently and fix anything t
 - "Google confirms" only with a Google source. Unconfirmed practice is worded as belief, not fact
 - Subtopics with their own internal link page get 1–2 sentences + the link, not a mini-post
 - No relative time words ("recently", "this year"). No unflagged competitor names or links. No AI patterns
-- Every internal link placed exactly once with descriptive, varied anchor text
+- Every internal link placed exactly once, anchor built from the target's confirmed topic (Step 2c), 3–6 words, unique per destination
+- FAQ answers neutral and encyclopedic, no first person
+- Every entity tied to an action or outcome, never a standalone definition
+- Competitor tools framed by fit; attribution phrasing only for verified feedback
 - Every product mention was written with `skills/product-plug.md` and passes that skill's rules
 - No invented facts, stats, quotes, or test results. Anything unverified is a VERIFY placeholder
 - Every external stat is from an original source, published within 3 years, verified on the source page, and linked inline with its year
@@ -377,7 +394,7 @@ Omit any Meta title / Meta description / URL slug / keyword line that was not in
 - Always run Step 2a. Use 2–4 data points, each supporting a specific claim. Original sources only, never aggregators or stat roundups. Published within the last 3 years, preferring 2. Every figure verified with `web_fetch` on the source page, stated with its source and year, and linked inline. Do not pause for user selection.
 - Avoid competitor-published studies. If one is used, flag it under Competitor sources in the Writer QA notes.
 - Never invent statistics, studies, quotes, customer stories, or Seobility test results. Unverifiable claims become VERIFY placeholders or are cut.
-- External links are limited to Step 2 sources, the brief's External references, and Reddit threads.
+- External links are limited to Step 2 sources, the brief's External references, Reddit threads, and (listicles/comparisons only) a tool's own official docs or pricing page, max 1–2 per tool.
 - Every internal link in the brief is placed exactly once with descriptive anchor text. 
 - All product mentions (brand + solution sentences, feature links, product screenshots) are written with `skills/product-plug.md`. Its placement, capability, plan, and no-click-path rules apply.
 - Every H2 opens with a direct 1–2 sentence answer. FAQ answers are 2–3 sentences with the answer first.

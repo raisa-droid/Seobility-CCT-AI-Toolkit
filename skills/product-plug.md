@@ -89,7 +89,7 @@ Name the brand, the feature, and what it does, in the same sentence, with concre
 - **Link the feature name** to its product URL the first time it appears in the section: `[Website Audit](https://www.seobility.net/en/website-audit/)`. Use the brief's URL, or the URL listed in `seobility_features.md`.
 - **Name first, then "we".** The first reference in the section is "Seobility's [Feature]". After that, "we" and "our" are fine.
 - **Official names only**, exactly as in `Seobility_tone_of_voice.md`: Website Audit, Ranking Monitoring, Backlink Monitoring, Uptime Monitoring; tools: SEO Checker, Ranking Checker, Backlink Checker, Keyword Research Tool, TF\*IDF Tool, Redirect Checker, SERP Snippet Generator, Keyword Checker, SEO Compare.
-- **Voice:** helpful, not salesy. Show how the feature helps with this section's task. Don't copy marketing copy from the features file verbatim ("Unlock your website's full potential"): pull out the facts and write them in the draft's voice. No superlatives, no comparisons to competitors.
+- **Voice:** helpful, not salesy. Show how the feature helps with this section's task. Don't copy marketing copy from the features file verbatim ("Unlock your website's full potential"): pull out the facts and write them in the draft's voice. No superlatives, no comparisons to competitors. Banned hype words: best, ultimate, game-changing, revolutionary, unmatched, powerful. Use objective, action-driven verbs instead: automates, tracks, surfaces, identifies, monitors, flags.
 
 ### Examples by placement
 
