@@ -11,7 +11,10 @@ if [ -f "$(dirname "$0")/../.env" ]; then
   source "$(dirname "$0")/../.env"
 fi
 
-: "${DATAFORSEO_WEBHOOK_URL:?DATAFORSEO_WEBHOOK_URL not set}"
+: "${DATAFORSEO_LOGIN:?DATAFORSEO_LOGIN not set}"
+: "${DATAFORSEO_PASSWORD:?DATAFORSEO_PASSWORD not set}"
+
+AUTH=$(echo -n "$DATAFORSEO_LOGIN:$DATAFORSEO_PASSWORD" | base64)
 
 # ── Input ──────────────────────────────────────────────────────────────────────
 SEED_KW="${1:-}"
@@ -26,9 +29,10 @@ CALL1_BODY=$(jq -n \
   '[{"keyword": $kw, "location_code": 2840, "language_code": "en", "limit": 20}]')
 
 CALL1_RESPONSE=$(curl -s -X POST \
-  "${DATAFORSEO_WEBHOOK_URL}" \
+  "https://api.dataforseo.com/v3/dataforseo_labs/google/keyword_suggestions/live" \
+  -H "Authorization: Basic $AUTH" \
   -H "Content-Type: application/json" \
-  -d "$(jq -n --arg endpoint 'https://api.dataforseo.com/v3/dataforseo_labs/google/keyword_suggestions/live' --argjson body "$CALL1_BODY" '{endpoint: $endpoint, body: $body}')")
+  -d "$CALL1_BODY")
 
 # Parse Call 1: filter SV >= 150, min 3 words, sort desc, top 20
 VARIANTS=$(echo "$CALL1_RESPONSE" | jq --arg seed "$SEED_KW" '
@@ -64,9 +68,10 @@ CALL2_BODY=$(jq -n \
   '[{"keywords": $kws, "location_code": 2840, "language_code": "en"}]')
 
 CALL2_RESPONSE=$(curl -s -X POST \
-  "${DATAFORSEO_WEBHOOK_URL}" \
+  "https://api.dataforseo.com/v3/dataforseo_labs/google/keyword_overview/live" \
+  -H "Authorization: Basic $AUTH" \
   -H "Content-Type: application/json" \
-  -d "$(jq -n --arg endpoint 'https://api.dataforseo.com/v3/dataforseo_labs/google/keyword_overview/live' --argjson body "$CALL2_BODY" '{endpoint: $endpoint, body: $body}')")
+  -d "$CALL2_BODY")
 
 # ── Merge + Score ─────────────────────────────────────────────────────────────
 echo "$CALL2_RESPONSE" | jq \

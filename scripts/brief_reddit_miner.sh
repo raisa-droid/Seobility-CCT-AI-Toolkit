@@ -12,8 +12,11 @@ if [ -f "$(dirname "$0")/../.env" ]; then
   source "$(dirname "$0")/../.env"
 fi
 
-: "${DATAFORSEO_WEBHOOK_URL:?DATAFORSEO_WEBHOOK_URL not set}"
-: "${GEMINI_WEBHOOK_URL:?GEMINI_WEBHOOK_URL not set}"
+: "${DATAFORSEO_LOGIN:?DATAFORSEO_LOGIN not set}"
+: "${DATAFORSEO_PASSWORD:?DATAFORSEO_PASSWORD not set}"
+: "${GEMINI_API_KEY:?GEMINI_API_KEY not set}"
+
+AUTH=$(echo -n "$DATAFORSEO_LOGIN:$DATAFORSEO_PASSWORD" | base64)
 
 # ── Input ──────────────────────────────────────────────────────────────────────
 if [ $# -eq 0 ]; then
@@ -27,12 +30,10 @@ H1="$1"
 echo "🔍 Finding Reddit threads for: $H1" >&2
 
 REDDIT_URLS=$(curl -s -X POST \
-  "${DATAFORSEO_WEBHOOK_URL}" \
+  "https://api.dataforseo.com/v3/serp/google/organic/live/advanced" \
+  -H "Authorization: Basic $AUTH" \
   -H "Content-Type: application/json" \
-  -d "$(jq -n \
-    --arg endpoint 'https://api.dataforseo.com/v3/serp/google/organic/live/advanced' \
-    --arg kw "$H1 reddit" \
-    '{endpoint: $endpoint, body: [{"keyword": $kw, "location_code": 2840, "language_code": "en", "depth": 10}]}')" \
+  -d "$(jq -n --arg kw "$H1 reddit" '[{"keyword": $kw, "location_code": 2840, "language_code": "en", "depth": 10}]')" \
   | python3 -c "
 import sys, json
 try:
@@ -98,7 +99,7 @@ No usernames. No preamble. No commentary outside these two sections."
   PROMPT_ESCAPED=$(echo "$PROMPT" | python3 -c "import sys, json; print(json.dumps(sys.stdin.read()))")
 
   RESPONSE=$(curl -s -X POST \
-    "${GEMINI_WEBHOOK_URL}" \
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$GEMINI_API_KEY" \
     -H "Content-Type: application/json" \
     -d "{\"contents\": [{\"parts\": [{\"text\": $PROMPT_ESCAPED}]}]}" \
     | python3 -c "
@@ -164,7 +165,7 @@ Rules:
 FORMAT_PROMPT_ESCAPED=$(echo "$FORMAT_PROMPT" | python3 -c "import sys, json; print(json.dumps(sys.stdin.read()))")
 
 curl -s -X POST \
-  "${GEMINI_WEBHOOK_URL}" \
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$GEMINI_API_KEY" \
   -H "Content-Type: application/json" \
   -d "{\"contents\": [{\"parts\": [{\"text\": $FORMAT_PROMPT_ESCAPED}]}]}" \
   | python3 -c "
