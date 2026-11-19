@@ -29,7 +29,7 @@ REFRESH_FOLDER_ID=1CTthW4EQ9qMEMAh1_xbhyB8GVv3InORS
 - `GEMINI_API_KEY`: your Gemini API key, **with billing active**. The AI-citation check and the third-party fact check use Gemini with Google Search grounding, so they fail if the key has no credits ("prepayment credits are depleted").
 - `REFRESH_FOLDER_ID`: the Drive folder the Fix Docs are created in. It starts as Raisa's temporary shared folder (she shares it with you as Editor). When you take over, create your own folder in Google Drive, open it and copy the ID from the URL (`drive.google.com/drive/folders/<ID>`). Empty = your My Drive.
 
-Don't set `GDRIVE_WEBHOOK_URL` / `GDRIVE_WEBHOOK_TOKEN`: that is Raisa's optional n8n upload. Without it, `/refresh-fix` creates the Doc through your own Google Drive connector. (`DATAFORSEO_WEBHOOK_URL` and `GEMINI_WEBHOOK_URL` also still work as an alternative to your own keys; the webhook wins when both are set.)
+Don't set `GDRIVE_WEBHOOK_URL` / `GDRIVE_WEBHOOK_TOKEN`: that is Raisa's optional n8n upload. Without it, `/refresh-fix` creates the Doc through your own Google Drive connector. Use your own keys. Don't set `DATAFORSEO_WEBHOOK_URL` or `GEMINI_WEBHOOK_URL` (Raisa's n8n shortcuts): if they are set they win over your keys.
 
 `.env` is git-ignored; never commit it.
 
